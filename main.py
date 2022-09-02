@@ -1,13 +1,10 @@
 import requests
 import os
 
+from bs4 import BeautifulSoup
+
 
 URL = 'https://tululu.org/'
-
-
-def check_for_redirect(response):
-    if response.url == URL:
-        raise requests.exceptions.HTTPError
 
 
 def download_books(i):
@@ -20,6 +17,25 @@ def download_books(i):
         filepath = f'books/kniga{i}.txt'
         with open(filepath, 'wb') as file:
             file.write(response.content)
+
+
+
+def check_for_redirect(response):
+    if response.url == URL:
+        raise requests.exceptions.HTTPError
+
+
+def get_parse_names():
+    url = 'https://tululu.org/b1/'
+    response = requests.get(url)
+    response.raise_for_status()
+
+    soup = BeautifulSoup(response.text, 'lxml')
+    h1 = soup.find('h1')
+    qwe = h1.text
+    qw = qwe.split(' \xa0 :: \xa0 ')
+    title, author = qw
+    print(f'Заголовок: {title}\nАвтор: {author}')
 
 
 def main():
