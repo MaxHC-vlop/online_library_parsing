@@ -48,11 +48,14 @@ def get_parse_names(url):
     img = soup.find(class_='bookimage').find('img')['src']
     img_url = urlsplit(urljoin(URL, img))
     comments = soup.select('.texts .black')
+    genres = soup.select('span.d_book a')
     info = {
         'title': title,
+        'author': author,
         'image_name': img_url.path,
         'image_url': urljoin(URL, img),
-        'coments': comments
+        'coments': [comment.text for comment in comments],
+        'genres': [genre.text for genre in genres]
     }
     return info
 
