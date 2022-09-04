@@ -1,10 +1,12 @@
-import requests
+import argparse
 import os
 
-from urllib.parse import urljoin, urlsplit
+import requests
 
+from urllib.parse import urljoin, urlsplit
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filepath, sanitize_filename
+
 
 URL = 'https://tululu.org/'
 
@@ -61,15 +63,27 @@ def parse_book_page(url):
 
 
 def main():
+    parser = argparse.ArgumentParser(
+        description='Download book and image from tululu.org'
+        )
+    parser.add_argument(
+        'start', help='First book ID', nargs='?', type=int, default=1
+        )
+    parser.add_argument(
+        'end', help='Last book ID', nargs='?', type=int, default=2
+        )
+    args = parser.parse_args()
     os.makedirs('books', exist_ok=True)
     os.makedirs('images', exist_ok=True)
-    for book_id in range(1, 11):
+    for book_id in range(args.start, args.end):
         try:
             book_download_url = f'{URL}txt.php?id={book_id}'
             parse_book_url = f'{URL}b{book_id}/'
             names = parse_book_page(parse_book_url)
             download_txt(book_download_url, names['title'], folder='books/')
-            download_image(names['image_url'], names['image_name'], folder='images/')
+            download_image(
+                names['image_url'], names['image_name'], folder='images/'
+                )
         except requests.exceptions.HTTPError:
             pass
 
