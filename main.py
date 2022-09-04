@@ -67,15 +67,15 @@ def main():
         description='Download book and image from tululu.org'
         )
     parser.add_argument(
-        'start', help='First book ID', nargs='?', type=int, default=1
+        'start_page', help='--start_page', nargs='?', type=int, default=1
         )
     parser.add_argument(
-        'end', help='Last book ID', nargs='?', type=int, default=2
+        'end_page', help='--end_page', nargs='?', type=int, default=2
         )
     args = parser.parse_args()
     os.makedirs('books', exist_ok=True)
     os.makedirs('images', exist_ok=True)
-    for book_id in range(args.start, args.end):
+    for book_id in range(args.start_page, args.end_page):
         try:
             book_download_url = f'{URL}txt.php?id={book_id}'
             parse_book_url = f'{URL}b{book_id}/'
