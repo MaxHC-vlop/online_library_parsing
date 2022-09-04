@@ -41,7 +41,7 @@ def check_for_redirect(response):
         raise requests.exceptions.HTTPError
 
 
-def get_parse_names(url):
+def parse_book_page(url):
     response = get_response(url)
     soup = BeautifulSoup(response.text, 'lxml')
     title, author = soup.find('h1').text.split(' \xa0 :: \xa0 ')
@@ -67,7 +67,7 @@ def main():
         try:
             book_download_url = f'{URL}txt.php?id={book_id}'
             parse_book_url = f'{URL}b{book_id}/'
-            names = get_parse_names(parse_book_url)
+            names = parse_book_page(parse_book_url)
             download_txt(book_download_url, names['title'], folder='books/')
             download_image(names['image_url'], names['image_name'], folder='images/')
         except requests.exceptions.HTTPError:
