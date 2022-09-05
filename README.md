@@ -1,6 +1,6 @@
 # Book parser from tululu.org
 
-Parser for downloading pictures and books from the site https://tululu.org/
+Parser for downloading pictures and books from the site https://tululu.org/ .
 
 ## How to install
 
@@ -9,7 +9,7 @@ Parser for downloading pictures and books from the site https://tululu.org/
 git@github.com:MaxHC-vlop/online_library_parsing.git
 ```
 
- - You must have python3.9 (or higher) installed to run the parser
+ - You must have python3.9 (or higher) installed to run the parser .
 
  - Create a virtual environment on directory project:
  ```bash
