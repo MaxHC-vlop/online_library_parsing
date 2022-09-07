@@ -78,9 +78,9 @@ def main():
     for book_id in range(args.start_page, args.end_page):
         try:
             book_url_prefix = 'txt.php'
-            payload_book = {'id': book_id}
+            book_payload = {'id': book_id}
             book_url = urljoin(URL, book_url_prefix)
-            book_response = get_response(book_url, payload_book)
+            book_response = get_response(book_url, book_payload)
 
             page_book_url_prefix = f'b{book_id}/'
             page_book_url = urljoin(URL, page_book_url_prefix)
