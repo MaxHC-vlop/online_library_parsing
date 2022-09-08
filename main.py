@@ -31,6 +31,7 @@ def download_image(response, filename, folder='images/'):
 def get_response(url, payload=None):
     session = requests.Session()
     response = session.get(url, params=payload)
+    response.raise_for_status()
     check_for_redirect(response)
     return response
 
