@@ -31,14 +31,13 @@ def download_image(response, filename, folder='images/'):
 def get_response(url, payload=None):
     session = requests.Session()
     response = session.get(url, params=payload)
-    if response.history:
-        check_for_redirect()
-
+    check_for_redirect(response)
     return response
 
 
-def check_for_redirect():
-    raise requests.exceptions.HTTPError
+def check_for_redirect(response):
+    if response.history:
+        raise requests.exceptions.HTTPError
 
 
 def parse_book_page(response):
