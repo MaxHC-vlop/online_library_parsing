@@ -90,13 +90,13 @@ def main():
             response = session.get(page_book_url)
             response.raise_for_status()
             check_for_redirect(response)
-            image_responce = parse_book_page(response)
+            info_page_book = parse_book_page(response)
 
             download_txt(
-                book_url, book_id, image_responce['title'], folder='books/'
+                book_url, book_id, info_page_book['title'], folder='books/'
                 )
             download_image(
-                image_responce['image_url'], image_responce['image_name'],
+                info_page_book['image_url'], info_page_book['image_name'],
                 folder='images/'
                 )
 
