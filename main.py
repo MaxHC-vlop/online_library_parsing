@@ -12,7 +12,13 @@ from pathvalidate import sanitize_filepath, sanitize_filename
 URL = 'https://tululu.org/{}'
 
 
-def download_txt(response, filename, folder='books/'):
+def download_txt(url,  book_id, filename, folder='books/'):
+    book_payload = {'id': book_id}
+    session = requests.Session()
+    response = session.get(url, params=book_payload)
+    response.raise_for_status()
+    check_for_redirect(response)
+
     folder = sanitize_filepath(folder)
     filename = sanitize_filename(filename)
     filepath = os.path.join(folder, f'{filename}.txt')
@@ -20,20 +26,17 @@ def download_txt(response, filename, folder='books/'):
         file.write(response.content)
 
 
-def download_image(response, filename, folder='images/'):
+def download_image(url, filename, folder='images/', payload=None):
+    session = requests.Session()
+    response = session.get(url, params=payload)
+    response.raise_for_status()
+    check_for_redirect(response)
+
     folder = sanitize_filepath(folder)
     filename = sanitize_filename(filename)
     filepath = os.path.join(folder, filename)
     with open(filepath, 'wb') as file:
         file.write(response.content)
-
-
-def get_response(url, payload=None):
-    session = requests.Session()
-    response = session.get(url, params=payload)
-    response.raise_for_status()
-    check_for_redirect(response)
-    return response
 
 
 def check_for_redirect(response):
@@ -78,22 +81,22 @@ def main():
     for book_id in range(args.start_page, args.end_page):
         try:
             book_url_prefix = 'txt.php'
-            book_payload = {'id': book_id}
             book_url = urljoin(URL, book_url_prefix)
-            book_response = get_response(book_url, book_payload)
 
             page_book_url_prefix = f'b{book_id}/'
             page_book_url = urljoin(URL, page_book_url_prefix)
-            responce_for_parse = get_response(page_book_url)
-            page_book_responce = parse_book_page(responce_for_parse)
 
-            image_responce = get_response(page_book_responce['image_url'])
+            session = requests.Session()
+            response = session.get(page_book_url)
+            response.raise_for_status()
+            check_for_redirect(response)
+            image_responce = parse_book_page(response)
 
             download_txt(
-                book_response, page_book_responce['title'], folder='books/'
+                book_url, book_id, image_responce['title'], folder='books/'
                 )
             download_image(
-                image_responce, page_book_responce['image_name'],
+                image_responce['image_url'], image_responce['image_name'],
                 folder='images/'
                 )
 
