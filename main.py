@@ -1,6 +1,7 @@
 import argparse
 import os
 import logging
+import time
 
 import requests
 
@@ -78,6 +79,8 @@ def main():
     os.makedirs('books', exist_ok=True)
     os.makedirs('images', exist_ok=True)
 
+    sleep_time = 1
+
     for book_id in range(args.start_page, args.end_page):
         try:
             book_url_prefix = 'txt.php'
@@ -105,6 +108,8 @@ def main():
 
         except requests.exceptions.ConnectionError as errc:
             logging.error(errc, exc_info=True)
+            time.sleep(sleep_time)
+            sleep_time += 1
             continue
 
 if __name__ == '__main__':
