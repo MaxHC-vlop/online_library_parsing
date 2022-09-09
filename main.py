@@ -100,8 +100,12 @@ def main():
                 folder='images/'
                 )
 
-        except requests.exceptions.HTTPError as err:
-            logging.error(err, exc_info=True)
+        except requests.exceptions.HTTPError as errh:
+            logging.error(errh, exc_info=True)
+
+        except requests.exceptions.ConnectionError as errc:
+            logging.error(errc, exc_info=True)
+            continue
 
 if __name__ == '__main__':
     main()
