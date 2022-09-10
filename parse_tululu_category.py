@@ -1,3 +1,4 @@
+from cgitb import text
 from urllib.parse import urljoin, urlparse
 
 import requests
@@ -15,10 +16,8 @@ def parse_book_page(response):
     # img_path = soup.find(class_='bookimage').find('img')['src']
     # comments = soup.select('.texts .black')
     # genres = soup.select('span.d_book a')
-    link_book = soup.select_one('div table.d_book a')['href']
-
+    link_page = soup.select('div .d_book a[href*="b"]')
     page_book = {
-        'link_book': urljoin(URL, link_book)
         # 'title': title,
         # 'author': author,
         # 'image_name': img_path,
@@ -27,7 +26,11 @@ def parse_book_page(response):
         # 'genres': [genre.text for genre in genres]
     }
 
-    return page_book
+    links = [urljoin(URL, link['href']) for link in link_page]
+
+    link_page = soup.select('div .d_book a[href*="b"]')
+
+    return links
 
 
 def main():
@@ -40,7 +43,7 @@ def main():
     response.raise_for_status()
 
     page_book_content = parse_book_page(response)
-    print(page_book_content)
+    print(*page_book_content, sep='\n')
 
 if __name__ == '__main__':
     main()
