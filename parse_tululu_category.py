@@ -34,16 +34,16 @@ def parse_book_page(response):
 
 
 def main():
-    # for book_id in range(1, 10):
-    page_book_url_prefix = f'/l55'
-    page_book_url = urljoin(URL, page_book_url_prefix)
+    for book_id in range(1, 11):
+        page_book_url_prefix = f'/l55/{book_id}'
+        page_book_url = urljoin(URL, page_book_url_prefix)
 
-    session = requests.Session()
-    response = session.get(page_book_url)
-    response.raise_for_status()
+        session = requests.Session()
+        response = session.get(page_book_url)
+        response.raise_for_status()
 
-    page_book_content = parse_book_page(response)
-    print(*page_book_content, sep='\n')
+        page_book_content = parse_book_page(response)
+        print(*page_book_content, sep='\n')
 
 if __name__ == '__main__':
     main()
