@@ -52,11 +52,14 @@ def parse_book_page(response):
     img_path = soup.find(class_='bookimage').find('img')['src']
     comments = soup.select('.texts .black')
     genres = soup.select('span.d_book a')
+    book_url = soup.select('table.d_block a[href*="/txt"]')
+    print(book_url)
 
     page_book = {
         'title': title,
         'author': author,
         'image_name': img_path,
+        'book_url': urljoin(response.url, book_url),
         'image_url': urljoin(response.url, img_path),
         'coments': [comment.text for comment in comments],
         'genres': [genre.text for genre in genres]
@@ -80,37 +83,45 @@ def main():
     os.makedirs('images', exist_ok=True)
 
     sleep_time = 1
+    try:
+        for books_pages in range(args.start_page, args.end_page):
 
-    for book_id in range(args.start_page, args.end_page):
-        try:
-            book_url_prefix = 'txt.php'
-            book_url = urljoin(URL, book_url_prefix)
-
-            page_book_url_prefix = f'b{book_id}/'
+            page_book_url_prefix = f'/l55/{books_pages}'
             page_book_url = urljoin(URL, page_book_url_prefix)
 
             session = requests.Session()
             response = session.get(page_book_url)
             response.raise_for_status()
-            check_for_redirect(response)
-            page_book_content = parse_book_page(response)
 
-            download_txt(
-                book_url, book_id, page_book_content['title'], folder='books/'
-                )
-            download_image(
-                page_book_content['image_url'], page_book_content['image_name'],
-                folder='images/'
-                )
+            soup = BeautifulSoup(response.text, 'lxml')
+            link_page = soup.select('.bookimage a[href]')
+            links = [urljoin(URL, link['href']) for link in link_page]
 
-        except requests.exceptions.HTTPError as errh:
-            logging.error(errh, exc_info=True)
+            for book_page in links:
+                print(book_page)
+                # page_book_url_prefix = f'b{book_id}/'
 
-        except requests.exceptions.ConnectionError as errc:
-            logging.error(errc, exc_info=True)
-            time.sleep(sleep_time)
-            sleep_time += 1
-            continue
+                session = requests.Session()
+                response = session.get(book_page)
+                response.raise_for_status()
+                check_for_redirect(response)
+                page_book_content = parse_book_page(response)
+                print(page_book_content)
+
+                # download_txt(
+                #     book_url, book_id, page_book_content['title'], folder='books/'
+                #     )
+                download_image(
+                    page_book_content['image_url'], page_book_content['image_name'],
+                    folder='images/'
+                    )
+
+    except requests.exceptions.HTTPError as errh:
+        logging.error(errh, exc_info=True)
+    except requests.exceptions.ConnectionError as errc:
+        logging.error(errc, exc_info=True)
+        time.sleep(sleep_time)
+        sleep_time += 1
 
 if __name__ == '__main__':
     main()
