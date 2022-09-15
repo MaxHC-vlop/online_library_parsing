@@ -42,12 +42,8 @@ def get_user_args():
     parser = argparse.ArgumentParser(
         description='Download book and image from tululu.org'
     )
-    parser.add_argument(
-        'start_page', help='--start_page', nargs='?', type=int, default=1
-        )
-    parser.add_argument(
-        'end_page', help='--end_page', nargs='?', type=int, default=2
-        )
+    parser.add_argument('--start_page', default=1, type=int)
+    parser.add_argument('--end_page', default=702, type=int)
     args = parser.parse_args()
 
     return args
@@ -62,7 +58,10 @@ def main():
     sleep_time = 1
 
     books = []
-    for books_pages in range(4, 5): # args.start_page, args.end_page
+
+    args = get_user_args()
+
+    for books_pages in range(args.start_page, args.end_page):
         try:
             page_book_url_prefix = f'/l55/{books_pages}'
             page_book_url = urljoin(URL, page_book_url_prefix)
