@@ -19,8 +19,8 @@ URL = 'https://tululu.org/{}'
 def parse_book_page(response):
     soup = BeautifulSoup(response.text, 'lxml')
 
-    title, author = soup.find('h1').text.split(' \xa0 :: \xa0 ')
-    img_path = soup.find(class_='bookimage').find('img')['src']
+    title, author = soup.select_one('h1').text.split(' \xa0 :: \xa0 ')
+    img_path = soup.select_one('table.d_book div.bookimage img')['src']
     comments = soup.select('.texts .black')
     genres = soup.select('span.d_book a')
     book_url = soup.select_one('table.d_book tr td a[href*="/txt.php?id="]')
