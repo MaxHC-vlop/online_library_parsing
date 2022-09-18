@@ -1,6 +1,6 @@
 # Book parser from tululu.org
 
-Parser for downloading pictures and books from the site https://tululu.org/ .
+Parser for downloading pictures and books from the site https://tululu.org/ . At the end, it saves a json file with information about books.
 
 ## How to install
 
@@ -26,28 +26,37 @@ pip install -r requirements.txt
 
 ## Arguments
 
-- `--start_page` - what book ID to start with (default value 1)
-- `--end_page` - what book ID to end with (default value 2)
+- `--start_page [num]` - first download page (default value 1)
+- `--end_page [num]` - last download page (default value 702)
+- `--dest_folder [folder]` - directory for storing uploaded files (default value `content`)
+- `--skip_imgs` - do not download pictures
+- `--skip_txt` - do not download books
+- `--json_path [folder]` - json file storage directory (default value `.`)
 
 ### Example
-- Downloads the first 8 books :
+- Loads the first 2 pages of the book and does not download pictures :
 ```bash
-python3 main.py 1 11
+python3 parse_tululu_category.py 1 2 --skip_imgs
 ```
 
 ## Run
 ```bash
-python3 main.py
+python3 parse_tululu_category.py 1 2 --skip_imgs
 ```
 - You will see directory structure:
 ```
 .
-├── main.py
+├── parse_tululu_category.py
 │   README.md
 │   requirements.txt
+│   books_content.json
 │
-├── books
-│   └── Административные рынки СССР и России.txt
-└── images
-    └── imagesnopic.gif
+└── content
+    └── books/
+    │      Административные рынки СССР и России.txt
+    │      ...
+    │
+    └── images/
+           imagesnopic.gif
+           ...
 ```
