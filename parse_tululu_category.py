@@ -4,16 +4,45 @@ import logging
 import time
 import json
 
-from download_file import download_image, download_txt
-from download_file import check_for_redirect
-
 import requests
 
+from pathvalidate import sanitize_filepath, sanitize_filename
 from urllib.parse import urljoin
 from bs4 import BeautifulSoup
 
 
 URL = 'https://tululu.org/{}'
+
+
+def download_txt(url, filename, folder='books/'):
+    session = requests.Session()
+    response = session.get(url)
+    response.raise_for_status()
+    check_for_redirect(response)
+
+    folder = sanitize_filepath(folder)
+    filename = sanitize_filename(filename)
+    filepath = os.path.join(folder, f'{filename}.txt')
+    with open(filepath, 'wb') as file:
+        file.write(response.content)
+
+
+def download_image(url, filename, folder='images/', payload=None):
+    session = requests.Session()
+    response = session.get(url, params=payload)
+    response.raise_for_status()
+    check_for_redirect(response)
+
+    folder = sanitize_filepath(folder)
+    filename = sanitize_filename(filename)
+    filepath = os.path.join(folder, filename)
+    with open(filepath, 'wb') as file:
+        file.write(response.content)
+
+
+def check_for_redirect(response):
+    if response.history:
+        raise requests.exceptions.HTTPError
 
 
 def parse_book_page(response):
@@ -42,24 +71,55 @@ def get_user_args():
     parser = argparse.ArgumentParser(
         description='Download book and image from tululu.org'
     )
-    parser.add_argument('--start_page', default=1, type=int)
-    parser.add_argument('--end_page', default=702, type=int)
+    parser.add_argument('--start_page', default=1, type=int,
+        help='First download page')
+
+    parser.add_argument('--end_page', default=702, type=int,
+        help='Last download page')
+
+    parser.add_argument('--dest_folder', default='content', type=str,
+        help='Directory for storing uploaded files')
+
+    parser.add_argument('--skip_imgs', action='store_true',
+        help='Do not download pictures')
+
+    parser.add_argument('--skip_txt', action='store_true',
+        help='Do not download books')
+
+    parser.add_argument('--json_path', default='.', type=str,
+        help='Json file storage directory')
+
     args = parser.parse_args()
 
     return args
 
 
 def main():
-    os.makedirs('books', exist_ok=True)
-    os.makedirs('images', exist_ok=True)
 
-    filename = 'books_content.json'
+    args = get_user_args()
+
+    books_folder = os.path.join(
+        args.dest_folder,
+        'books'
+        )
+    os.makedirs(books_folder, exist_ok=True)
+
+    image_folder = os.path.join(
+        args.dest_folder,
+        'images'
+        )
+    os.makedirs(image_folder, exist_ok=True)
+
+    json_folder = os.path.join(
+        args.json_path
+        )
+    os.makedirs(json_folder, exist_ok=True)
+
+    filename = f'{args.json_path}/books_content.json'
 
     sleep_time = 1
 
     books = []
-
-    args = get_user_args()
 
     for books_pages in range(args.start_page, args.end_page):
         try:
@@ -72,12 +132,12 @@ def main():
             check_for_redirect(response)
 
             soup = BeautifulSoup(response.text, 'lxml')
-            link_page = soup.select('.bookimage a[href]')
-            links = [urljoin(URL, link['href']) for link in link_page]
+            parsed_links = soup.select('.bookimage a[href]')
+            links = [urljoin(URL, link['href']) for link in parsed_links]
 
         except requests.exceptions.HTTPError as errh:
             logging.error(errh, exc_info=True)
-    
+
         except requests.exceptions.ConnectionError as errc:
             logging.error(errc, exc_info=True)
             time.sleep(sleep_time)
@@ -105,21 +165,30 @@ def main():
 
                 books.append(book_content)
 
-                download_txt(
-                    page_book_content['book_url'], page_book_content['title'], folder='books/'
-                    )
-                download_image(
-                    page_book_content['image_url'], page_book_content['image_name'],
-                    folder='images/'
-                    )
+                if not args.skip_txt:
+                    download_txt(
+                        page_book_content['book_url'],
+                        page_book_content['title'],
+                        books_folder
+                        )
+                else:
+                    pass
+
+                if not args.skip_imgs:
+                    download_image(
+                        page_book_content['image_url'],
+                        page_book_content['image_name'],
+                        folder=image_folder
+                        )
+                else:
+                    pass
 
             except TypeError as errt:
                 print('None in download link: {0}'.format(errt))
                 continue
 
-
         with open(filename, "w", encoding='utf-8') as my_file:
-            json.dump(books, my_file, indent=7 ,ensure_ascii=False)
+            json.dump(books, my_file, indent=7, ensure_ascii=False)
 
 
 if __name__ == '__main__':
