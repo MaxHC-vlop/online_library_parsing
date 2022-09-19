@@ -191,8 +191,8 @@ def main():
                 time.sleep(sleep_time)
                 sleep_time += 1
 
-        with open(filename, "w", encoding='utf-8') as my_file:
-            json.dump(books, my_file, indent=7, ensure_ascii=False)
+        with open(filename, "w", encoding='utf-8') as file:
+            json.dump(books, file, indent=7, ensure_ascii=False)
 
 
 if __name__ == '__main__':
