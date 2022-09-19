@@ -171,8 +171,6 @@ def main():
                         page_book_content['title'],
                         books_folder
                         )
-                else:
-                    pass
 
                 if not args.skip_imgs:
                     download_image(
@@ -180,8 +178,6 @@ def main():
                         page_book_content['image_name'],
                         folder=image_folder
                         )
-                else:
-                    pass
 
             except TypeError as errt:
                 print('None in download link: {0}'.format(errt))
