@@ -77,7 +77,7 @@ def get_user_args():
     parser.add_argument('--end_page', default=702, type=int,
         help='Last download page')
 
-    parser.add_argument('--dest_folder', default='content', type=str,
+    parser.add_argument('--dest_folder', default='content',
         help='Directory for storing uploaded files')
 
     parser.add_argument('--skip_imgs', action='store_true',
@@ -86,7 +86,7 @@ def get_user_args():
     parser.add_argument('--skip_txt', action='store_true',
         help='Do not download books')
 
-    parser.add_argument('--json_path', default='.', type=str,
+    parser.add_argument('--json_path', default='.',
         help='Json file storage directory')
 
     args = parser.parse_args()
