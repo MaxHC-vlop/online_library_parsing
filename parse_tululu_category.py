@@ -183,6 +183,14 @@ def main():
                 print('None in download link: {0}'.format(errt))
                 continue
 
+            except requests.exceptions.HTTPError as errh:
+                logging.error(errh, exc_info=True)
+
+            except requests.exceptions.ConnectionError as errc:
+                logging.error(errc, exc_info=True)
+                time.sleep(sleep_time)
+                sleep_time += 1
+
         with open(filename, "w", encoding='utf-8') as my_file:
             json.dump(books, my_file, indent=7, ensure_ascii=False)
 
