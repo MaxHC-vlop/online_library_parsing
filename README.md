@@ -36,12 +36,12 @@ pip install -r requirements.txt
 ### Example
 - Loads the first 2 pages of the book and does not download pictures :
 ```bash
-python3 parse_tululu_category.py 1 2 --skip_imgs
+python3 parse_tululu_category.py --start_page 1 --end_page 2 --skip_imgs
 ```
 
 ## Run
 ```bash
-python3 parse_tululu_category.py 1 2 --skip_imgs
+python3 parse_tululu_category.py --start_page 1 --end_page 2 --skip_imgs
 ```
 - You will see directory structure:
 ```
