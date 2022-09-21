@@ -115,7 +115,7 @@ def main():
         )
     os.makedirs(json_folder, exist_ok=True)
 
-    filename = f'{args.json_path}/books_content.json'
+    filename = f'{args.json_path}{os.sep}books_content.json'
 
     sleep_time = 1
 
@@ -158,7 +158,7 @@ def main():
                     'title': page_book_content['title'],
                     'author': page_book_content['author'],
                     'img_src': page_book_content['image_name'],
-                    'book_path': f'books/{book_path}.txt',
+                    'book_path': f'books{os.sep}{book_path}.txt',
                     'comments': page_book_content['coments'],
                     'genres': page_book_content['genres'],
                 }
