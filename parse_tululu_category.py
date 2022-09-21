@@ -133,7 +133,7 @@ def main():
 
             soup = BeautifulSoup(response.text, 'lxml')
             parsed_links = soup.select('.bookimage a[href]')
-            links = [urljoin(URL, link['href']) for link in parsed_links]
+            links = [urljoin(page_book_url, link['href']) for link in parsed_links]
 
         except requests.exceptions.HTTPError as errh:
             logging.error(errh, exc_info=True)
