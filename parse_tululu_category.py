@@ -121,7 +121,7 @@ def main():
 
     books = []
 
-    for books_pages in range(args.start_page, args.end_page):
+    for number_2, books_pages in enumerate(range(args.start_page, args.end_page)):
         try:
             page_book_url_prefix = f'/l55/{books_pages}'
             page_book_url = urljoin(URL, page_book_url_prefix)
@@ -143,7 +143,7 @@ def main():
             time.sleep(sleep_time)
             sleep_time += 1
 
-        for book_page in links:
+        for number, book_page in enumerate(links):
             try:
                 session = requests.Session()
                 response = session.get(book_page)
@@ -152,13 +152,20 @@ def main():
 
                 page_book_content = parse_book_page(response)
 
-                book_path = page_book_content['title']
+
+                image1 = page_book_content['image_name'].replace('/', '')
+
+                image = f'..{os.sep}content{os.sep}images{os.sep}{image1}'
+
+                book_path = f'book_{number_2}.{number}'
+
+                filepath = f'..{os.sep}content{os.sep}books{os.sep}{book_path}.txt'
 
                 book_content = {
                     'title': page_book_content['title'],
                     'author': page_book_content['author'],
-                    'img_src': page_book_content['image_name'],
-                    'book_path': f'books{os.sep}{book_path}.txt',
+                    'img_src': image,
+                    'book_path': filepath,
                     'comments': page_book_content['coments'],
                     'genres': page_book_content['genres'],
                 }
@@ -168,7 +175,7 @@ def main():
                 if not args.skip_txt:
                     download_txt(
                         page_book_content['book_url'],
-                        page_book_content['title'],
+                        book_path,
                         books_folder
                         )
 
